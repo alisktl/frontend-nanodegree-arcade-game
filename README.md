@@ -1,6 +1,11 @@
-frontend-nanodegree-arcade-game
-===============================
+### How to Start Game
+1. Install Python
+2. Clone this repository using command 'git clone https://github.com/alisktl/frontend-nanodegree-arcade-game.git'
+3. Using terminal, go to project's home directory
+4. Start a **Static Server** using Python's `SimpleHTTPServer`
+5. Now open a browser and type the address 'https://localhost:8000'
+6. Enjoy the game
 
-Students should use this rubric: https://www.udacity.com/course/viewer#!/c-ud015/l-3072058665/m-3072588797
-
-for self-checking their submission.
+### How to Play
+1. Use arrow keys to control our hero
+2. Try to avoid enemies

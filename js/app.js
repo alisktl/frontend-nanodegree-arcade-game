@@ -1,14 +1,33 @@
 var allEnemies = [];
 var player;
 
-// Put all enemies and player to starting locations
-var resetAll = function() {
-    allEnemies = [1000];
-    for(var i = 0; i < 1000; i++) {
+var PLAYER_INITIAL_X = 200;
+var PLAYER_INITIAL_Y = 400;
+var MAX_ENEMY_NUM = 1000;
+
+var MIN_MAP_LEFT_COOR = 100;
+var MAX_MAP_RIGHT_COOR = 399;
+var MAX_MAP_DOWN_COOR = 399;
+
+var LOC_STEP_X = 100;
+var LOC_STEP_Y = 85;
+
+var RIVER_START_LOC_Y = 60;
+
+// Start game
+var startGame = function() {
+    for(var i = 0; i < MAX_ENEMY_NUM; i++) {
         allEnemies[i] = new Enemy(getRandomX(i), getRandomY(), getRandomSpeed());
     }
 
-    player = new Player();
+    player = new Player(PLAYER_INITIAL_X, PLAYER_INITIAL_Y);
+};
+
+// Reset enemies
+var resetEnemies = function() {
+    for(var i = 0; i < MAX_ENEMY_NUM; i++) {
+        allEnemies[i].resetEnemy(i);
+    }
 };
 
 // Get random speed
@@ -18,15 +37,17 @@ var getRandomSpeed = function() {
 
 // Get random y-location
 var getRandomY = function() {
-    return (60 + (Math.floor(Math.random() * 3) * 85));
+    return (RIVER_START_LOC_Y + (Math.floor(Math.random() * 3) * LOC_STEP_Y));
 };
 
 // Get random x-location
 var getRandomX = function(i) {
-    if(i < 4)
-        return -100 * (Math.ceil((i + 1) / 3));
-    else
-        return -300 * (Math.ceil((i + 1) / 3));
+    if(i < 4) {
+        return -1 * LOC_STEP_X * (Math.ceil((i + 1) / 3));
+    }
+    else {
+        return -3 * LOC_STEP_X * (Math.ceil((i + 1) / 3));
+    }
 };
 
 // Enemies our player must avoid
@@ -58,23 +79,33 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
+// Reset one enemy for coordinates and speed
+Enemy.prototype.resetEnemy = function(i) {
+    this.x = getRandomX(i);
+    this.y = getRandomY();
+    this.speed = getRandomSpeed()
+}
+
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
-var Player = function() {
+var Player = function(x, y) {
     this.sprite = 'images/char-boy.png';
-    this.x = 200;
-    this.y = 400;
+    this.x = x;
+    this.y = y;
 };
 
 Player.prototype.update = function() {
-    if(this.y < 60)
-        resetAll();
+    if(this.y < RIVER_START_LOC_Y) {
+        resetEnemies();
+        player.reset();
+    }
 
     for(var i = 0; i < allEnemies.length; i++) {
         var enemy = allEnemies[i];
         if(enemy.y === this.y && enemy.x >= this.x - 75 && enemy.x <= this.x + 50) {
-            resetAll();
+            resetEnemies();
+            player.reset();
         }
     }
 };
@@ -84,29 +115,38 @@ Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
+// Reset Player coordinates
+Player.prototype.reset = function() {
+    player.x = PLAYER_INITIAL_X;
+    player.y = PLAYER_INITIAL_Y;
+};
+
 // Receives code from Player
 Player.prototype.handleInput = function(keyCode) {
     if(keyCode === 'left') {
-        if(this.x >= 100)
-            this.x -= 100;
+        if(this.x >= MIN_MAP_LEFT_COOR) {
+            this.x -= LOC_STEP_X;
+        }
     }
     else if(keyCode === 'right') {
-        if(this.x <= 399)
-            this.x += 100;
+        if(this.x <= MAX_MAP_RIGHT_COOR) {
+            this.x += LOC_STEP_X;
+        }
     }
     else if(keyCode === 'up') {
-        this.y -= 85;
+        this.y -= LOC_STEP_Y;
     }
     else if(keyCode === 'down') {
-        if(this.y <= 399)
-            this.y += 85;
+        if(this.y <= MAX_MAP_DOWN_COOR) {
+            this.y += LOC_STEP_Y;
+        }
     }
 };
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-resetAll();
+startGame();
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
