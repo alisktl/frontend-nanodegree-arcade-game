@@ -270,8 +270,8 @@ var startGame = function() {
         allEnemies[i] = new Enemy(getRandomX(i), getRandomY(), getRandomSpeed());
     }
 
-    for(var i = 0; i < MAX_GEM_NUM; i++) {
-        allGems[i] = new Gem(getRandomX(i + (i * 5)), getRandomY(), getRandomSpeed());
+    for(var j = 0; j < MAX_GEM_NUM; j++) {
+        allGems[j] = new Gem(getRandomX(j + (j * 5)), getRandomY(), getRandomSpeed());
     }
 
     player = new Player(PLAYER_INITIAL_X, PLAYER_INITIAL_Y);
